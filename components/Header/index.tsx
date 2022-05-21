@@ -2,6 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { ChevronDownIcon, HomeIcon } from '@heroicons/react/solid';
 import { SearchForm } from '../SearchForm';
+import { Login } from '../Login';
 import {
 	BellIcon,
 	ChatIcon,
@@ -12,8 +13,6 @@ import {
 	SpeakerphoneIcon,
 	VideoCameraIcon,
 } from '@heroicons/react/outline';
-
-interface HeaderProps {}
 
 export const Header = () => {
 	return (
@@ -45,17 +44,7 @@ export const Header = () => {
 			<div className='ml-5 flex items-center lg:hidden'>
 				<MenuIcon className='icon' />
 			</div>
-			<div className='hidden cursor-pointer items-center space-x-2 border border-gray-100 p-2 lg:flex'>
-				<div className='relative h-5 w-5 flex-shrink-0'>
-					<Image
-						src='https://links.papareact.com/23l'
-						layout='fill'
-						objectFit='contain'
-						alt=''
-					/>
-				</div>
-				<p className='text-gray-400'>Sign In</p>
-			</div>
+			<Login />
 		</div>
 	);
 };
