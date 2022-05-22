@@ -10,22 +10,34 @@ import {
 } from '@heroicons/react/outline';
 import { Avatar } from '../Avatar';
 import TimeAgo from 'react-timeago';
+import Link from 'next/link';
+import { Jelly } from '@uiball/loaders';
 
 interface PostProps {
 	post: Post;
 }
 
 export const Post = ({ post }: PostProps) => {
-	return (
-		<article className='flex border border-gray-300 bg-white shadow-sm hover:border-gray-600'>
-			<PostVote post={post} />
-			<div className='p-3 pb-1'>
-				<PostHeader post={post} />
-				<PostBody post={post} />
-				<img className='w-full' src={post.image} alt={post.title} />
-				<PostFooter post={post} />
+	if (!post) {
+		return (
+			<div className='flex w-full items-center justify-center p-10 text-xl'>
+				<Jelly size={50} color='#ff4501' />
 			</div>
-		</article>
+		);
+	}
+
+	return (
+		<Link href={`/post/${post.id}`}>
+			<article className='flex border border-gray-300 bg-white shadow-sm hover:border-gray-600'>
+				<PostVote post={post} />
+				<div className='p-3 pb-1'>
+					<PostHeader post={post} />
+					<PostBody post={post} />
+					<img className='w-full' src={post.image} alt={post.title} />
+					<PostFooter post={post} />
+				</div>
+			</article>
+		</Link>
 	);
 };
 
@@ -47,9 +59,11 @@ const PostHeader = ({ post }: PostProps) => (
 	<div className='flex items-center space-x-2'>
 		<Avatar seed={post.subreddit[0]?.topic} />
 		<p className='text-xs text-gray-400'>
-			<span className='font-bold text-black hover:text-blue-400 hover:underline'>
-				r/{post.subreddit[0]?.topic}
-			</span>{' '}
+			<Link href={`/subreddit/${post.subreddit[0]?.topic}`}>
+				<a className='font-bold text-black hover:text-blue-400 hover:underline'>
+					r/{post.subreddit[0]?.topic}
+				</a>
+			</Link>{' '}
 			• Posted by u/
 			{post.username} <TimeAgo date={post.created_at} />
 		</p>

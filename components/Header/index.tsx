@@ -13,17 +13,22 @@ import {
 	SpeakerphoneIcon,
 	VideoCameraIcon,
 } from '@heroicons/react/outline';
+import Link from 'next/link';
 
 export const Header = () => {
 	return (
-		<header className='sticky top-0 z-10 flex bg-white px-4 py-2 shadow-sm'>
-			<div className='relative h-10 w-20 flex-shrink-0 cursor-pointer'>
-				<Image
-					src='https://links.papareact.com/fqy'
-					layout='fill'
-					objectFit='contain'
-					alt=''
-				/>
+		<header className='sticky top-0 z-10 flex items-center bg-white px-4 py-2 shadow-sm'>
+			<div className='relative h-10 w-20 flex-shrink-0'>
+				<Link href='/'>
+					<a>
+						<Image
+							src='https://links.papareact.com/fqy'
+							layout='fill'
+							objectFit='contain'
+							alt=''
+						/>
+					</a>
+				</Link>
 			</div>
 			<div className='mx-7 flex items-center xl:min-w-[300px]'>
 				<HomeIcon className='h-5 w-5' />
