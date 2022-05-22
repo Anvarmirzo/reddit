@@ -6,4 +6,8 @@
     .icon {
         @apply h-9 w-6 lg:w-9 rounded-sm lg:p-1 lg:hover:bg-gray-100 cursor-pointer;
     }
+
+    label {
+        @apply cursor-pointer
+    }
 }
