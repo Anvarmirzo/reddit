@@ -3,6 +3,10 @@ import { useSession } from 'next-auth/react';
 import { Avatar } from '../Avatar';
 import { LinkIcon, PhotographIcon } from '@heroicons/react/outline';
 import { useForm } from 'react-hook-form';
+import { useMutation } from '@apollo/client';
+import { ADD_POST, ADD_SUBREDDIT } from '../../graphql/mutations';
+import { client } from '../../apollo-client';
+import { GET_SUBREDDIT_BY_TOPIC } from '../../graphql/queries';
 
 type FormData = {
 	postTitle: string;
@@ -13,6 +17,8 @@ type FormData = {
 
 export const PostBox = () => {
 	const [isImageBoxOpen, setIsImageBoxOpen] = useState(false);
+	const [addPost] = useMutation(ADD_POST);
+	const [addSubreddit] = useMutation(ADD_SUBREDDIT);
 
 	const { data: session } = useSession();
 
@@ -27,7 +33,45 @@ export const PostBox = () => {
 	const toggleImageBox = () => setIsImageBoxOpen(!isImageBoxOpen);
 
 	const onSubmit = handleSubmit(async (formData) => {
-		console.log(formData);
+		try {
+			let subredditId = '';
+			const {
+				data: { getSubredditListByTopic },
+			} = await client.query({
+				query: GET_SUBREDDIT_BY_TOPIC,
+				variables: {
+					topic: formData.subreddit,
+				},
+			});
+
+			if (getSubredditListByTopic.length > 0) {
+				subredditId = getSubredditListByTopic[0].id;
+			} else {
+				const { data } = await addSubreddit({
+					variables: { topic: formData.subreddit },
+				});
+
+				subredditId = data.insertSubreddit.id;
+			}
+
+			const {
+				data: { insertPost: newPost },
+			} = await addPost({
+				variables: {
+					body: formData.postBody,
+					title: formData.postTitle,
+					image: formData.postImage || '',
+					subreddit_id: subredditId,
+					username: session?.user?.name,
+				},
+			});
+
+			for (let field in formData) {
+				setValue(field as keyof FormData, '');
+			}
+		} catch (e) {
+			console.log(e);
+		}
 	});
 
 	return (
