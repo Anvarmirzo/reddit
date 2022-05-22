@@ -10,10 +10,10 @@ export const Feed = () => {
 	console.log(data);
 	console.log(posts);
 	return (
-		<div>
+		<main className='space-y- mt-5 space-y-4'>
 			{posts?.map((post) => (
 				<Post key={post.id} post={post} />
 			))}
-		</div>
+		</main>
 	);
 };

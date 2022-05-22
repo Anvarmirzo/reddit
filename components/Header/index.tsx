@@ -16,7 +16,7 @@ import {
 
 export const Header = () => {
 	return (
-		<div className='sticky top-0 z-10 flex bg-white px-4 py-2 shadow-sm'>
+		<header className='sticky top-0 z-10 flex bg-white px-4 py-2 shadow-sm'>
 			<div className='relative h-10 w-20 flex-shrink-0 cursor-pointer'>
 				<Image
 					src='https://links.papareact.com/fqy'
@@ -45,6 +45,6 @@ export const Header = () => {
 				<MenuIcon className='icon' />
 			</div>
 			<Login />
-		</div>
+		</header>
 	);
 };

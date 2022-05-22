@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { useMutation } from '@apollo/client';
 import { ADD_POST, ADD_SUBREDDIT } from '../../graphql/mutations';
 import { client } from '../../apollo-client';
-import { GET_SUBREDDIT_BY_TOPIC } from '../../graphql/queries';
+import { GET_ALL_POSTS, GET_SUBREDDIT_BY_TOPIC } from '../../graphql/queries';
 import { toast } from 'react-hot-toast';
 
 type FormData = {
@@ -18,7 +18,9 @@ type FormData = {
 
 export const PostBox = () => {
 	const [isImageBoxOpen, setIsImageBoxOpen] = useState(false);
-	const [addPost] = useMutation(ADD_POST);
+	const [addPost] = useMutation(ADD_POST, {
+		refetchQueries: [GET_ALL_POSTS, 'getPostList'],
+	});
 	const [addSubreddit] = useMutation(ADD_SUBREDDIT);
 
 	const { data: session } = useSession();
@@ -36,7 +38,7 @@ export const PostBox = () => {
 	const onSubmit = handleSubmit(async (formData) => {
 		const notification = toast.loading('Creating new post...');
 		try {
-			let subredditId = '';
+			let subredditId: string;
 			const {
 				data: { getSubredditListByTopic },
 			} = await client.query({
@@ -56,9 +58,7 @@ export const PostBox = () => {
 				subredditId = data.insertSubreddit.id;
 			}
 
-			const {
-				data: { insertPost: newPost },
-			} = await addPost({
+			await addPost({
 				variables: {
 					body: formData.postBody,
 					title: formData.postTitle,
@@ -68,12 +68,13 @@ export const PostBox = () => {
 				},
 			});
 
-			for (let field in formData) {
-				setValue(field as keyof FormData, '');
-			}
 			toast.success('New post created!', {
 				id: notification,
 			});
+
+			for (let field in formData) {
+				setValue(field as keyof FormData, '');
+			}
 		} catch (e) {
 			console.log(e);
 			toast.error('Something went wrong!', {
