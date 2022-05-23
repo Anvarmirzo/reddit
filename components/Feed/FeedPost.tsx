@@ -12,12 +12,13 @@ import { Avatar } from '../Avatar';
 import TimeAgo from 'react-timeago';
 import Link from 'next/link';
 import { Jelly } from '@uiball/loaders';
+import { IPost } from '../../models/interfaces';
 
 interface PostProps {
-	post: Post;
+	post: IPost;
 }
 
-export const Post = ({ post }: PostProps) => {
+export const FeedPost = ({ post }: PostProps) => {
 	if (!post) {
 		return (
 			<div className='flex w-full items-center justify-center p-10 text-xl'>
