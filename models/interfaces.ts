@@ -1,26 +1,26 @@
-type Comment = {
+export interface IComment {
 	created_at: string;
 	id: number;
 	post_id: number;
 	text: string;
 	username: string;
-};
+}
 
-type Vote = {
+export interface IVote {
 	created_at: string;
 	id: number;
 	post_id: number;
 	upvote: boolean;
 	username: string;
-};
+}
 
-type Subreddit = {
+export interface ISubreddit {
 	created_at: string;
 	id: number;
 	topic: string;
-};
+}
 
-type Post = {
+export interface IPost {
 	body: string;
 	created_at: string;
 	id: number;
@@ -28,7 +28,7 @@ type Post = {
 	subreddit_id: number;
 	title: string;
 	username: string;
-	votes: Vote[];
-	comments: Comment[];
-	subreddit: Subreddit[];
-};
+	votes: IVote[];
+	comments: IComment[];
+	subreddit: ISubreddit[];
+}
