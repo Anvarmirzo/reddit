@@ -6,3 +6,4 @@ export * from './CommentForm';
 export * from './Feed';
 export * from './Feed/FeedPost';
 export * from './Comment';
+export * from './Communities';

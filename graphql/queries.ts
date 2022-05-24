@@ -120,3 +120,13 @@ export const GET_SUBREDDIT_BY_TOPIC = gql`
 		}
 	}
 `;
+
+export const GET_SUBREDDITS_WITH_LIMIT = gql`
+	query MyQuery($limit: Int!) {
+		getSubredditListByLimit(limit: $limit) {
+			created_at
+			id
+			topic
+		}
+	}
+`;

@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { Feed, PostBox } from '../components';
+import { Communities, Feed, PostBox } from '../components';
 
 const Home: NextPage = () => {
 	return (
@@ -11,6 +11,7 @@ const Home: NextPage = () => {
 			<PostBox />
 			<div className='flex'>
 				<Feed />
+				<Communities />
 			</div>
 		</div>
 	);
