@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	ArrowDownIcon,
 	ArrowUpIcon,
@@ -12,7 +12,12 @@ import { Avatar } from '../Avatar';
 import TimeAgo from 'react-timeago';
 import Link from 'next/link';
 import { Jelly } from '@uiball/loaders';
-import { IPost } from '../../models/interfaces';
+import { IPost, IVote } from '../../models/interfaces';
+import { useSession } from 'next-auth/react';
+import { toast } from 'react-hot-toast';
+import { useMutation, useQuery } from '@apollo/client';
+import { GET_ALL_VOTES_BY_POST_ID } from '../../graphql/queries';
+import { ADD_VOTE } from '../../graphql/mutations';
 
 interface PostProps {
 	post: IPost;
@@ -43,13 +48,77 @@ export const FeedPost = ({ post }: PostProps) => {
 };
 
 const PostVote = ({ post }: PostProps) => {
+	const { data: session } = useSession();
+
+	const { data, loading } = useQuery(GET_ALL_VOTES_BY_POST_ID, {
+		variables: {
+			post_id: post?.id,
+		},
+	});
+	const [addVote] = useMutation(ADD_VOTE, {
+		refetchQueries: [GET_ALL_VOTES_BY_POST_ID, 'getVotesByPostId'],
+	});
+
+	const [isVoted, setIsVoted] = useState<boolean>();
+
+	useEffect(() => {
+		const votes: IVote[] = data?.getVotesByPostId;
+		const vote = votes?.find((v) => v.username === session?.user?.name)?.upvote;
+		setIsVoted(vote);
+	}, [data]);
+
+	const vote =
+		(isUpVote: boolean) =>
+		async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+			e.preventDefault();
+			if (!session) return toast("You'll need to be logged in to vote");
+
+			if (typeof isVoted === 'boolean' && isVoted === isUpVote) return;
+
+			const {
+				data: { insertVote: newVote },
+			} = await addVote({
+				variables: {
+					post_id: post.id,
+					username: session.user?.name,
+					upvote: isUpVote,
+				},
+			});
+		};
+
+	const displayVotes = () => {
+		const votes: IVote[] = data?.getVotesByPostId;
+
+		const totalVotes = votes?.reduce(
+			(total, vote) => (vote.upvote ? total + 1 : total - 1),
+			0,
+		);
+
+		if (!votes?.length) return 0;
+		if (!totalVotes) return votes[0].upvote ? 1 : -1;
+
+		return totalVotes;
+	};
+
 	return (
 		<div className='flex flex-col items-center justify-start space-y-1 rounded-l-md bg-gray-50 p-4 text-gray-400'>
-			<button className='voteButtons hover:text-red-400' type='button'>
+			<button
+				onClick={vote(true)}
+				className={`voteButtons hover:text-red-400 ${
+					isVoted && 'text-red-400'
+				}`}
+				type='button'
+			>
 				<ArrowUpIcon />
 			</button>
-			<span className='text-xs font-bold text-black'>0</span>
-			<button className='voteButtons hover:text-blue-400' type='button'>
+			<span className='text-xs font-bold text-black'>{displayVotes()}</span>
+			<button
+				onClick={vote(false)}
+				className={`voteButtons hover:text-blue-400 ${
+					isVoted === false && 'text-blue-400'
+				}`}
+				type='button'
+			>
 				<ArrowDownIcon />
 			</button>
 		</div>
