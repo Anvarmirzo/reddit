@@ -19,13 +19,7 @@ export const CommentForm = ({ session, postId }: CommentFormProps) => {
 	const [addComment] = useMutation(ADD_COMMENT, {
 		refetchQueries: [GET_POST_BY_POST_ID, 'getPostListByPostId'],
 	});
-	const {
-		register,
-		handleSubmit,
-		watch,
-		setValue,
-		formState: { errors },
-	} = useForm<FormData>();
+	const { register, handleSubmit, setValue } = useForm<FormData>();
 
 	const onSubmit: SubmitHandler<FormData> = async (data) => {
 		console.log(data);
@@ -47,13 +41,15 @@ export const CommentForm = ({ session, postId }: CommentFormProps) => {
 		<form onSubmit={handleSubmit(onSubmit)} className='flex flex-col space-y-2'>
 			<textarea
 				{...register('comment', { required: true })}
-				disabled={!session}
 				placeholder={
 					session ? 'What are your thoughts?' : 'Please sign in to comment'
 				}
 				className='h-24 rounded-md border border-gray-200 p-2 pl-4 outline-none disabled:bg-gray-50'
 			/>
-			<button className='rounded-full bg-red-500 p-3 font-semibold text-white disabled:bg-gray-200'>
+			<button
+				disabled={!session}
+				className='rounded-full bg-red-500 p-3 font-semibold text-white disabled:bg-gray-200'
+			>
 				Comment
 			</button>
 		</form>
